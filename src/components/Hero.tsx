@@ -4,17 +4,18 @@ import { AnimatedBackground } from './AnimatedBackground';
 import { openWhatsAppQuote } from '../utils/whatsapp';
 
 interface HeroProps {
-  onOpenQuoteModal: () => void;
+  onOpenQuoteModal?: () => void;
+  onSelectProduct?: (productName: string) => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onOpenQuoteModal }) => {
+export const Hero: React.FC<HeroProps> = () => {
   const handleScrollToProducts = () => {
     const el = document.getElementById('products');
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleQuoteClick = () => {
-    openWhatsAppQuote();
+  const handleQuoteClick = (productName?: string) => {
+    openWhatsAppQuote(productName);
   };
 
   return (
@@ -61,7 +62,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuoteModal }) => {
               className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full sm:w-auto mb-10"
             >
               <button
-                onClick={handleQuoteClick}
+                onClick={() => handleQuoteClick()}
                 className="btn-smooth px-8 py-4 rounded-2xl bg-brand-primary text-white text-base font-bold shadow-xl shadow-brand-primary/30 hover:bg-brand-primaryHover flex items-center justify-center gap-3 transition-all cursor-pointer font-montserrat-700"
               >
                 <span>Get Free Quote</span>
@@ -135,7 +136,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuoteModal }) => {
                 repeat: Infinity,
                 ease: 'easeInOut',
               }}
-              className="absolute -top-4 -left-2 sm:left-0 z-20 glass-card p-4 rounded-2xl shadow-card-hover max-w-[220px]"
+              onClick={() => handleQuoteClick('Stretch Film')}
+              className="absolute -top-4 -left-2 sm:left-0 z-20 glass-card p-4 rounded-2xl shadow-card-hover max-w-[220px] cursor-pointer hover:scale-105 transition-transform"
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-primary to-brand-accent flex items-center justify-center text-white shadow-md">
@@ -164,7 +166,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuoteModal }) => {
                 ease: 'easeInOut',
                 delay: 1,
               }}
-              className="absolute top-12 -right-2 sm:-right-4 z-20 glass-card p-4 rounded-2xl shadow-card-hover max-w-[210px]"
+              onClick={() => handleQuoteClick('PET Strap')}
+              className="absolute top-12 -right-2 sm:-right-4 z-20 glass-card p-4 rounded-2xl shadow-card-hover max-w-[210px] cursor-pointer hover:scale-105 transition-transform"
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-brand-accent shadow-md">
@@ -192,7 +195,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuoteModal }) => {
                 ease: 'easeInOut',
                 delay: 0.5,
               }}
-              className="absolute bottom-4 -left-4 z-20 glass-card p-4 rounded-2xl shadow-card-hover max-w-[210px]"
+              onClick={() => handleQuoteClick('BOPP Tape')}
+              className="absolute bottom-4 -left-4 z-20 glass-card p-4 rounded-2xl shadow-card-hover max-w-[210px] cursor-pointer hover:scale-105 transition-transform"
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-brand-accent flex items-center justify-center text-white shadow-md">
@@ -217,7 +221,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuoteModal }) => {
                 ease: 'easeInOut',
                 delay: 1.5,
               }}
-              className="absolute -bottom-6 -right-2 z-20 glass-card p-4 rounded-2xl shadow-card-hover max-w-[220px]"
+              onClick={() => handleQuoteClick('Carton Box')}
+              className="absolute -bottom-6 -right-2 z-20 glass-card p-4 rounded-2xl shadow-card-hover max-w-[220px] cursor-pointer hover:scale-105 transition-transform"
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-orange-500 flex items-center justify-center text-white shadow-md">
@@ -237,3 +242,4 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuoteModal }) => {
     </section>
   );
 };
+

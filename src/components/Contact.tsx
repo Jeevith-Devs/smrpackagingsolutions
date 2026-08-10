@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Send, CheckCircle2, Building, ExternalLink } from 'lucide-react';
 import { COMPANY_DETAILS } from '../data/about';
 import type { QuoteFormData } from '../types';
+import { openWhatsAppInquiry } from '../utils/whatsapp';
 
 interface ContactProps {
   prefilledProduct?: string;
@@ -30,11 +31,14 @@ export const Contact: React.FC<ContactProps> = ({ prefilledProduct }) => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    openWhatsAppInquiry(formData);
+
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSubmitted(true);
-    }, 800);
+    }, 400);
   };
+
 
   return (
     <section id="contact" className="py-20 lg:py-28 bg-white relative font-the-future">

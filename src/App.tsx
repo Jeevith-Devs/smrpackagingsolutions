@@ -43,7 +43,7 @@ export const App: React.FC = () => {
       {/* Floating WhatsApp Action Widget */}
       <WhatsAppButton />
 
-      {/* Quick Quote Interactive Modal */}
+      {/* Quick Quote Interactive Form Modal */}
       <QuoteModal
         isOpen={isQuoteModalOpen}
         onClose={() => setIsQuoteModalOpen(false)}
@@ -54,3 +54,5 @@ export const App: React.FC = () => {
 };
 
 export default App;
+
+

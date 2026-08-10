@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, CheckCircle2, ShieldCheck, Sparkles } from 'lucide-react';
 import { PRODUCTS } from '../data/products';
+import { openWhatsAppInquiry } from '../utils/whatsapp';
 
 interface QuoteModalProps {
   isOpen: boolean;
@@ -30,11 +31,20 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose, initial
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    openWhatsAppInquiry({
+      name,
+      companyName: company,
+      email,
+      phone,
+      product: selectedProduct,
+      message,
+    });
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSubmitted(true);
-    }, 700);
+    }, 400);
   };
+
 
   const handleReset = () => {
     setIsSubmitted(false);

@@ -1,18 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PRODUCTS } from '../data/products';
 import type { Product } from '../types';
-import { ProductModal } from './ProductModal';
 import { openWhatsAppQuote } from '../utils/whatsapp';
 
 interface ProductsProps {
-  onOpenQuoteModal: (productName?: string) => void;
+  onOpenQuoteModal?: (productName?: string) => void;
 }
 
-export const Products: React.FC<ProductsProps> = ({ onOpenQuoteModal }) => {
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-
-  const handleGetQuote = (productName?: string) => {
+export const Products: React.FC<ProductsProps> = () => {
+  const handleProductClick = (productName: string) => {
     openWhatsAppQuote(productName);
   };
 
@@ -47,7 +44,7 @@ export const Products: React.FC<ProductsProps> = ({ onOpenQuoteModal }) => {
             viewport={{ once: true }}
             className="text-base sm:text-lg text-slate-600 font-normal"
           >
-            Explore our complete range of 24 premium industrial packaging consumables engineered for durability, transit protection, and export compliance.
+            Explore our complete range of 24 premium industrial packaging consumables engineered for durability, transit protection, and export compliance. Click any item for instant WhatsApp quote.
           </motion.p>
         </div>
 
@@ -64,7 +61,7 @@ export const Products: React.FC<ProductsProps> = ({ onOpenQuoteModal }) => {
                 transition={{ duration: 0.25, delay: index * 0.02 }}
                 whileHover={{ y: -6 }}
                 className="bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-card-hover transition-all duration-200 flex flex-col overflow-hidden group cursor-pointer transform-gpu"
-                onClick={() => setSelectedProduct(product)}
+                onClick={() => handleProductClick(product.name)}
               >
                 {/* Thumbnail Image */}
                 <div className="relative h-48 w-full overflow-hidden bg-slate-100">
@@ -108,12 +105,12 @@ export const Products: React.FC<ProductsProps> = ({ onOpenQuoteModal }) => {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleGetQuote(product.name);
+                        handleProductClick(product.name);
                       }}
-                      className="btn-smooth text-xs font-extrabold text-brand-primary flex items-center gap-1 hover:text-brand-primaryHover transition-colors cursor-pointer font-montserrat-700"
+                      className="btn-smooth text-xs font-extrabold text-white bg-emerald-600 hover:bg-emerald-700 px-3.5 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm transition-all cursor-pointer font-montserrat-700"
                     >
+                      <img src="/whatsapplogo.png" alt="WhatsApp" className="w-3.5 h-3.5 object-contain" />
                       <span>Get Quote</span>
-                      <i className="fi fi-sr-arrow-right text-[10px]" />
                     </button>
                   </div>
 
@@ -123,14 +120,9 @@ export const Products: React.FC<ProductsProps> = ({ onOpenQuoteModal }) => {
           </AnimatePresence>
         </div>
 
-        {/* Product Modal Preview */}
-        <ProductModal
-          product={selectedProduct}
-          onClose={() => setSelectedProduct(null)}
-          onRequestQuote={(prodName) => handleGetQuote(prodName)}
-        />
-
       </div>
     </section>
   );
 };
+
+
