@@ -1,0 +1,16 @@
+{
+  "name": "SMR Packaging Solutions",
+  "short_name": "SMR Packaging",
+  "description": "Industrial packaging consumables supplier in Kancheepuram & Chennai, Tamil Nadu.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0284c7",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

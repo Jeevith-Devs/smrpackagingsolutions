@@ -1,0 +1,7 @@
+# robots.txt for SMR Packaging Solutions
+# Allow all search engine crawlers to index full site
+User-agent: *
+Allow: /
+
+# XML Sitemap link for Google, Bing, Yahoo
+Sitemap: https://smrpackagingsolutions.com/sitemap.xml
