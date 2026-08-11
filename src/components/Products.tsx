@@ -16,7 +16,7 @@ export const Products: React.FC<ProductsProps> = () => {
   return (
     <section id="products" className="py-20 lg:py-28 bg-white relative font-the-future">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <motion.div
@@ -63,18 +63,18 @@ export const Products: React.FC<ProductsProps> = () => {
                 className="bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-card-hover transition-all duration-200 flex flex-col overflow-hidden group cursor-pointer transform-gpu"
                 onClick={() => handleProductClick(product.name)}
               >
-                {/* Thumbnail Image */}
-                <div className="relative h-48 w-full overflow-hidden bg-slate-100">
+                {/* Thumbnail Image - Fills card header box on both mobile and laptop/desktop */}
+                <div className="relative h-64 sm:h-52 lg:h-56 w-full overflow-hidden bg-slate-100 flex items-center justify-center p-0">
                   <img
                     src={product.image}
                     alt={product.name}
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 transform-gpu"
                   />
-                  
+
                   {/* Badge */}
                   {product.badge && (
-                    <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-brand-primary text-white text-[10px] font-extrabold uppercase tracking-wider shadow-md">
+                    <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-brand-primary text-white text-[10px] font-extrabold uppercase tracking-wider shadow-md z-10">
                       {product.badge}
                     </span>
                   )}

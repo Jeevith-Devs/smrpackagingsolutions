@@ -192,18 +192,22 @@ export const About: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 items-center">
 
             {/* Left: MD Portrait Image Showcase (Col 5) */}
-            <div className="lg:col-span-5 relative h-80 lg:h-full min-h-[380px] bg-slate-900 overflow-hidden">
-              <img
-                src="/MD.png"
-                alt="Mr. S. Ranjith Kumar - Managing Director, SMR Packaging Solutions"
-                className="w-full h-full object-cover object-top"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent" />
+            <div className="lg:col-span-5 relative bg-slate-900 flex flex-col justify-between overflow-hidden h-full min-h-[420px] lg:min-h-[480px] rounded-t-3xl lg:rounded-tr-none lg:rounded-l-3xl">
+              <div className="relative flex-1 w-full h-80 sm:h-96 lg:h-full overflow-hidden">
+                <img
+                  src="/MD.png"
+                  alt="Mr. S. Ranjith Kumar - Managing Director, SMR Packaging Solutions"
+                  className="w-full h-full object-cover object-top"
+                />
 
-              {/* MD Name & Title Overlay */}
-              <div className="absolute bottom-6 left-6 right-6 text-white">
-                <h4 className="text-2xl font-extrabold font-montserrat-700">Mr. S. Ranjith Kumar</h4>
-                <p className="text-xs text-slate-300 font-medium">Managing Director & Founder • SMR Packaging Solutions</p>
+                {/* Subtle Professional Vignette Overlay */}
+                <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_35%,_transparent_45%,_rgba(15,23,42,0.65)_100%)] shadow-[inset_0_0_40px_rgba(2,6,23,0.7)] z-10" />
+              </div>
+
+              {/* MD Name & Title Info Section */}
+              <div className="p-5 sm:p-6 bg-slate-950/95 border-t border-slate-800/80 text-white z-20 relative">
+                <h4 className="text-xl sm:text-2xl font-extrabold font-montserrat-700 tracking-tight text-white">Mr. S. Ranjith Kumar</h4>
+                <p className="text-xs text-brand-accent font-semibold mt-1">Managing Director & Founder • SMR Packaging Solutions</p>
               </div>
             </div>
 

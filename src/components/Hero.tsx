@@ -105,14 +105,16 @@ export const Hero: React.FC<HeroProps> = () => {
             {/* Visual Backplate */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-100/60 via-white/80 to-sky-50 rounded-3xl border border-white/80 shadow-2xl backdrop-blur-lg -rotate-1 scale-95" />
 
-            {/* Central Industrial Hero Image Showcase */}
-            <div className="relative w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl border-4 border-white transform rotate-1 transition-transform hover:rotate-0 duration-500 z-10">
-              <img
-                src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80"
-                alt="Industrial packaging warehouse stretch film pallets"
-                className="w-full h-80 object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/30 to-transparent flex flex-col justify-end p-5 text-white">
+            {/* Central Industrial Hero Image Showcase - Entire image visible */}
+            <div className="relative w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl border-4 border-white transform rotate-1 transition-transform hover:rotate-0 duration-500 z-10 bg-slate-950">
+              <div className="h-64 sm:h-72 w-full p-2 flex items-center justify-center bg-slate-900">
+                <img
+                  src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80"
+                  alt="Industrial packaging warehouse stretch film pallets"
+                  className="w-full h-full object-contain rounded-xl"
+                />
+              </div>
+              <div className="p-4 bg-slate-950 text-white border-t border-slate-800">
                 <div className="flex items-center gap-1 text-amber-400 mb-1">
                   <i className="fi fi-sr-star text-sm text-amber-400" />
                   <i className="fi fi-sr-star text-sm text-amber-400" />
@@ -120,8 +122,8 @@ export const Hero: React.FC<HeroProps> = () => {
                   <i className="fi fi-sr-star text-sm text-amber-400" />
                   <i className="fi fi-sr-star text-sm text-amber-400" />
                 </div>
-                <h3 className="font-bold text-lg font-montserrat-700">Industrial Warehouse Consumables</h3>
-                <p className="text-xs text-slate-300 font-tiempos-italic">Kancheepuram & Greater Chennai Supply Chain</p>
+                <h3 className="font-bold text-base font-montserrat-700 text-white">Industrial Warehouse Consumables</h3>
+                <p className="text-xs text-slate-400">Kancheepuram & Greater Chennai Supply Chain</p>
               </div>
             </div>
 

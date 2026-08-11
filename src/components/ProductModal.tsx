@@ -52,20 +52,22 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, on
               <X className="w-5 h-5" />
             </button>
 
-            {/* Top Banner Image */}
-            <div className="relative h-60 sm:h-72 w-full overflow-hidden bg-slate-900 shrink-0">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover opacity-90"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+            {/* Top Banner Image - Fills box on all screen sizes */}
+            <div className="relative bg-slate-950 shrink-0 border-b border-slate-800">
+              <div className="relative h-64 sm:h-80 w-full p-0 flex items-center justify-center bg-slate-900">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover z-10"
+                />
+              </div>
 
-              <div className="absolute bottom-6 left-6 right-6 text-white">
-                <span className="px-3 py-1 rounded-full bg-brand-accent text-white text-xs font-bold uppercase tracking-wider mb-2 inline-block shadow-md">
+              {/* Title Header Bar */}
+              <div className="p-5 sm:p-6 bg-slate-900/95 border-t border-slate-800/80 text-white">
+                <span className="px-3 py-1 rounded-full bg-brand-accent text-white text-[11px] font-extrabold uppercase tracking-wider mb-2 inline-block shadow-md">
                   {product.category}
                 </span>
-                <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white font-montserrat-700">
                   {product.name}
                 </h3>
               </div>

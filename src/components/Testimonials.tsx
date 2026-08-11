@@ -80,7 +80,7 @@ export const Testimonials: React.FC = () => {
                 <img
                   src={item.avatar}
                   alt={item.name}
-                  className="w-12 h-12 rounded-full object-cover border-2 border-brand-primary/20 shadow-sm"
+                  className="w-12 h-12 rounded-full object-contain bg-slate-100 p-0.5 border-2 border-brand-primary/20 shadow-sm"
                 />
                 <div>
                   <h4 className="text-base font-bold text-brand-secondary flex items-center gap-1.5">
