@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 
 interface ClientLogo {
   id: string;
@@ -65,30 +64,21 @@ const CLIENT_LOGOS: ClientLogo[] = [
   },
 ];
 
-// Duplicate items array to create seamless infinite marquee loop
+// Duplicate to create a seamless infinite loop (CSS animation scrolls -50%)
 const MARQUEE_LOGOS = [...CLIENT_LOGOS, ...CLIENT_LOGOS];
 
 export const CustomerCarousel: React.FC = () => {
   return (
     <div className="relative py-6 bg-white/70 backdrop-blur-md border-y border-slate-200/80 overflow-hidden z-20">
 
-      {/* Gradient Fades for Left and Right Edges */}
-      <div className="absolute top-0 bottom-0 left-0 w-28 bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none" />
-      <div className="absolute top-0 bottom-0 right-0 w-28 bg-gradient-to-l from-white via-white/80 to-transparent z-10 pointer-events-none" />
+      {/* Gradient fades – left edge */}
+      <div className="absolute top-0 bottom-0 left-0 w-24 bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none" />
+      {/* Gradient fades – right edge */}
+      <div className="absolute top-0 bottom-0 right-0 w-24 bg-gradient-to-l from-white via-white/80 to-transparent z-10 pointer-events-none" />
 
-      {/* Automatic Infinite Ticker Marquee with Client Logos */}
-      <div className="flex overflow-hidden select-none items-center">
-        <motion.div
-          animate={{
-            x: ['0%', '-50%'],
-          }}
-          transition={{
-            duration: 30,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
-          className="flex items-center gap-10 shrink-0 pr-10"
-        >
+      {/* Pure-CSS GPU-composited marquee — zero JS per frame, lag-free on mobile */}
+      <div className="flex overflow-hidden" aria-label="Our clients">
+        <div className="marquee-track items-center gap-10">
           {MARQUEE_LOGOS.map((client, index) => (
             <a
               key={`${client.id}-${index}`}
@@ -96,18 +86,23 @@ export const CustomerCarousel: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
               title={client.name}
-              className="flex items-center justify-center grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300 transform hover:scale-110 cursor-pointer shrink-0 py-2 px-4 rounded-xl hover:bg-white/80 hover:shadow-md border border-transparent hover:border-slate-200"
-              onClick={(e) => e.stopPropagation()}
+              className="flex items-center justify-center shrink-0 py-2 px-4 rounded-xl border border-transparent
+                         grayscale opacity-60
+                         hover:grayscale-0 hover:opacity-100 hover:scale-110 hover:bg-white/80
+                         hover:shadow-md hover:border-slate-200
+                         transition-[filter,opacity,transform,box-shadow,background-color,border-color]
+                         duration-300 ease-out"
             >
               <img
                 src={client.imageSrc}
                 alt={client.name}
                 className="h-10 w-auto max-w-[120px] object-contain"
+                loading="lazy"
                 draggable={false}
               />
             </a>
           ))}
-        </motion.div>
+        </div>
       </div>
 
     </div>

@@ -131,3 +131,93 @@ html {
     linear-gradient(to right, rgba(0, 86, 166, 0.05) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(0, 86, 166, 0.05) 1px, transparent 1px);
 }
+
+/* ── GPU-accelerated infinite marquee ────────────────────────────────────── */
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  animation: marquee-scroll 30s linear infinite;
+}
+
+/* Pause on hover (desktop only – keeps mobile always-playing) */
+@media (hover: hover) {
+  .marquee-track:hover {
+    animation-play-state: paused;
+  }
+}
+
+/* ── Mors-style Hero ──────────────────────────────────────────────────────── */
+
+/* Animated dark gradient background inside the hero card */
+@keyframes hero-bg-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.hero-card-bg {
+  background: linear-gradient(135deg, #050c17 0%, #0a1628 30%, #071020 55%, #0d1a30 80%, #050c17 100%);
+  background-size: 300% 300%;
+  animation: hero-bg-shift 14s ease-in-out infinite;
+}
+
+/* Subtle noise/grain texture overlay */
+.hero-noise::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px 128px;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 1;
+  opacity: 0.35;
+}
+
+/* Word rotator: the visible window clips to one word height */
+.word-rotator-window {
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: bottom;
+}
+
+/* Each word slides in from below, exits upward */
+@keyframes word-in {
+  from { transform: translateY(110%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@keyframes word-out {
+  from { transform: translateY(0);     opacity: 1; }
+  to   { transform: translateY(-110%); opacity: 0; }
+}
+
+.word-enter {
+  animation: word-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.word-exit {
+  animation: word-out 0.45s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+  position: absolute;
+}
+
+/* Pulsing green availability dot */
+@keyframes ping-slow {
+  0%, 100% { transform: scale(1);   opacity: 0.75; }
+  50%       { transform: scale(2.2); opacity: 0;    }
+}
+
+.ping-dot {
+  animation: ping-slow 2s ease-out infinite;
+}

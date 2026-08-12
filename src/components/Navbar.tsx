@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
 import { COMPANY_DETAILS } from '../data/about';
 import { openWhatsAppQuote } from '../utils/whatsapp';
 
@@ -8,276 +7,234 @@ interface NavbarProps {
 }
 
 const NAV_ITEMS = [
-  { label: 'Home', href: '#home', num: '01' },
-  { label: 'About', href: '#about', num: '02' },
-  { label: 'Products', href: '#products', num: '03' },
-  { label: 'Testimonials', href: '#testimonials', num: '04' },
-  { label: 'Contact', href: '#contact', num: '05' },
+  { label: 'Home',         href: '#home' },
+  { label: 'About',        href: '#about' },
+  { label: 'Products',     href: '#products' },
+  { label: 'Testimonials', href: '#testimonials' },
+  { label: 'Contact',      href: '#contact' },
 ];
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenQuoteModal }) => {
-  const [activeTab, setActiveTab] = useState<string>('Home');
-  const [hoveredTab, setHoveredTab] = useState<string | null>(null);
-  const [isScrolled, setIsScrolled] = useState<boolean>(false);
+export const Navbar: React.FC<NavbarProps> = () => {
+  const [activeTab,        setActiveTab]        = useState<string>('Home');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
+  /* ── Active-section tracker ─────────────────────────────────────────── */
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-
-      const sections = NAV_ITEMS.map((item) => item.href.substring(1));
-      const scrollPosition = window.scrollY + 200;
-
-      for (const sectionId of sections) {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          const top = element.offsetTop;
-          const height = element.offsetHeight;
-          if (scrollPosition >= top && scrollPosition < top + height) {
-            const currentItem = NAV_ITEMS.find((item) => item.href === `#${sectionId}`);
-            if (currentItem) setActiveTab(currentItem.label);
-          }
+      const scrollPos = window.scrollY + 200;
+      for (const item of NAV_ITEMS) {
+        const el = document.getElementById(item.href.substring(1));
+        if (el && scrollPos >= el.offsetTop && scrollPos < el.offsetTop + el.offsetHeight) {
+          setActiveTab(item.label);
         }
       }
     };
-
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  /* ── Close mobile menu on outside click ─────────────────────────────── */
   useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
+    const handleOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setIsMobileMenuOpen(false);
+      }
     };
+    if (isMobileMenuOpen) document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
   }, [isMobileMenuOpen]);
 
-  const scrollToSection = (href: string) => {
-    const targetId = href.startsWith('#') ? href.substring(1) : href;
-    const targetElement = document.getElementById(targetId) || document.querySelector(href);
-
-    if (targetElement) {
-      const navbarHeight = 80;
-      const elementPosition = targetElement.getBoundingClientRect().top + window.scrollY;
-      const offsetPosition = Math.max(0, elementPosition - navbarHeight);
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
-      });
+  /* ── Smooth scroll helper ───────────────────────────────────────────── */
+  const scrollTo = (href: string, label: string) => {
+    setActiveTab(label);
+    setIsMobileMenuOpen(false);
+    const el = document.getElementById(href.substring(1));
+    if (el) {
+      const y = el.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
     }
   };
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, label: string) => {
     e.preventDefault();
-    setActiveTab(label);
-    setIsMobileMenuOpen(false);
-
-    scrollToSection(href);
-
-    setTimeout(() => {
-      scrollToSection(href);
-    }, 200);
+    scrollTo(href, label);
   };
 
-  const handleQuoteClick = () => {
-    setIsMobileMenuOpen(false);
-    openWhatsAppQuote();
-  };
+  const handleQuoteClick = () => openWhatsAppQuote();
 
   return (
-    <>
-      {/* Sticky Main Header */}
-      <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 transform-gpu ${
-          isScrolled ? 'py-3 bg-slate-900/10 backdrop-blur-md shadow-sm' : 'py-5 bg-transparent'
-        }`}
+    /* Fixed wrapper — full width, pointer-events only on the pill */
+    <header className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 pt-4 md:pt-6 pointer-events-none">
+
+      {/* ── Floating Pill Capsule ─────────────────────────────────────── */}
+      <div
+        ref={menuRef}
+        className="pointer-events-auto relative flex items-center gap-5 md:gap-8
+                   px-4 md:px-5 py-2 md:py-3
+                   rounded-2xl
+                   border border-black/[0.07]
+                   shadow-[0_2px_20px_rgba(0,0,0,0.10)]
+                   w-auto"
+        style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          {/* Left: SMR LONG Logo */}
+
+        {/* Logo */}
+        <a
+          href="#home"
+          onClick={(e) => handleNavClick(e, '#home', 'Home')}
+          className="flex items-center shrink-0 transition-opacity duration-300 hover:opacity-60"
+        >
+          <img
+            src="/SMR LONG.svg"
+            alt="SMR Packaging Solutions"
+            className="h-6 sm:h-7 w-auto object-contain"
+            style={{ maxWidth: 120 }}
+          />
+        </a>
+
+        {/* ── Desktop Nav Links ───────────────────────────────────────── */}
+        <nav className="hidden md:flex items-center gap-1" aria-label="Main navigation">
+          {NAV_ITEMS.map((item) => {
+            const isActive = activeTab === item.label;
+            return (
+              <a
+                key={item.label}
+                href={item.href}
+                onClick={(e) => handleNavClick(e, item.href, item.label)}
+                className="group relative flex flex-col items-center px-3 py-1 focus:outline-none"
+              >
+                <span
+                  className={`text-[10px] font-semibold tracking-[0.06em] uppercase transition-all duration-300
+                    group-hover:-translate-y-[3px] group-hover:text-neutral-900
+                    ${isActive ? 'text-brand-primary' : 'text-neutral-500'}`}
+                >
+                  {item.label}
+                </span>
+                {/* Dot indicator */}
+                <span
+                  className={`mt-0.5 w-1 h-1 rounded-full transition-opacity duration-200
+                    ${isActive ? 'opacity-100 bg-brand-primary' : 'opacity-0 group-hover:opacity-100 bg-neutral-900'}`}
+                />
+              </a>
+            );
+          })}
+
+          {/* Thin divider */}
+          <span className="w-px h-4 mx-1 bg-black/10 block shrink-0" />
+
+          {/* Phone icon link */}
           <a
-            href="#home"
-            className="flex items-center group focus:outline-none btn-smooth"
-            onClick={(e) => handleNavClick(e, '#home', 'Home')}
+            href={`tel:${COMPANY_DETAILS.phone}`}
+            title="+91 96777 69949"
+            className="p-1.5 text-neutral-500 hover:text-neutral-900 transition-colors duration-300"
+            aria-label="Call us"
           >
-            <img
-              src="/SMR LONG.svg"
-              alt="SMR Packaging Solutions"
-              className="h-10 sm:h-12 w-auto object-contain"
-            />
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/>
+            </svg>
           </a>
 
-          {/* Center: Motion Primitives Animated Tabs Hover Nav (Desktop) */}
-          <nav className="hidden md:flex items-center">
-            <div className="flex items-center p-1.5 rounded-full bg-white/80 backdrop-blur-md border border-slate-200/80 shadow-glass">
-              {NAV_ITEMS.map((item) => {
-                const isActive = activeTab === item.label;
-                const isHovered = hoveredTab === item.label;
+          {/* Get Quote pill button */}
+          <button
+            onClick={handleQuoteClick}
+            className="ml-1 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full
+                       bg-brand-primary text-white text-[10px] font-bold tracking-[0.05em] uppercase
+                       hover:bg-brand-primaryHover transition-colors duration-200 cursor-pointer shadow-sm"
+          >
+            Get Quote
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M12.293 4.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L15.586 11H3a1 1 0 110-2h12.586l-3.293-3.293a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </nav>
 
-                return (
-                  <a
-                    key={item.label}
-                    href={item.href}
-                    onClick={(e) => handleNavClick(e, item.href, item.label)}
-                    onMouseEnter={() => setHoveredTab(item.label)}
-                    onMouseLeave={() => setHoveredTab(null)}
-                    className="relative px-5 py-2 text-sm font-semibold rounded-full focus:outline-none font-the-future tab-smooth"
-                    style={{
-                      color: isActive ? '#0056A6' : isHovered ? '#0F172A' : '#64748B',
-                    }}
-                  >
-                    {/* Hover background indicator */}
-                    {isHovered && !isActive && (
-                      <motion.span
-                        layoutId="hover-tab"
-                        className="absolute inset-0 rounded-full bg-slate-100/80 -z-10"
-                        transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                      />
-                    )}
+        {/* ── Mobile Hamburger / X Button ─────────────────────────────── */}
+        <button
+          className="md:hidden relative w-6 h-5 flex flex-col justify-center items-center focus:outline-none cursor-pointer"
+          aria-label="Toggle menu"
+          aria-expanded={isMobileMenuOpen}
+          onClick={() => setIsMobileMenuOpen((v) => !v)}
+        >
+          {/* Top bar */}
+          <span
+            className="absolute h-[2px] w-5 bg-neutral-800 rounded-full transition-all duration-300 ease-out"
+            style={{
+              transform: isMobileMenuOpen ? 'translateY(0) rotate(45deg)' : 'translateY(-4px)',
+            }}
+          />
+          {/* Middle bar */}
+          <span
+            className="absolute h-[2px] w-5 bg-neutral-800 rounded-full transition-all duration-300 ease-out"
+            style={{
+              opacity: isMobileMenuOpen ? 0 : 1,
+              transform: isMobileMenuOpen ? 'translateX(10px)' : 'translateX(0)',
+            }}
+          />
+          {/* Bottom bar */}
+          <span
+            className="absolute h-[2px] w-5 bg-neutral-800 rounded-full transition-all duration-300 ease-out"
+            style={{
+              transform: isMobileMenuOpen ? 'translateY(0) rotate(-45deg)' : 'translateY(4px)',
+            }}
+          />
+        </button>
 
-                    {/* Active tab background slider */}
-                    {isActive && (
-                      <motion.span
-                        layoutId="active-tab"
-                        className="absolute inset-0 rounded-full bg-brand-primary/10 border border-brand-primary/20 shadow-sm -z-10"
-                        transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                      />
-                    )}
+        {/* ── Mobile Dropdown Menu ────────────────────────────────────── */}
+        <nav
+          aria-label="Mobile menu"
+          className="md:hidden absolute top-full left-1/2 mt-2 bg-white rounded-2xl
+                     shadow-[0_8px_32px_rgba(0,0,0,0.10)] overflow-hidden w-[260px]"
+          style={{
+            transform: isMobileMenuOpen
+              ? 'translateX(-50%) translateY(0) scale(1)'
+              : 'translateX(-50%) translateY(-8px) scale(0.97)',
+            opacity: isMobileMenuOpen ? 1 : 0,
+            pointerEvents: isMobileMenuOpen ? 'auto' : 'none',
+            transition: 'opacity 0.22s ease, transform 0.22s cubic-bezier(0.22,1,0.36,1)',
+          }}
+        >
+          {NAV_ITEMS.map((item) => {
+            const isActive = activeTab === item.label;
+            return (
+              <a
+                key={item.label}
+                href={item.href}
+                onClick={(e) => handleNavClick(e, item.href, item.label)}
+                className={`flex items-center px-5 py-3 text-sm font-medium border-b border-neutral-100 last:border-0
+                            hover:bg-neutral-50 transition-colors duration-200
+                            ${isActive ? 'text-brand-primary font-bold' : 'text-neutral-900'}`}
+              >
+                {item.label}
+                {isActive && (
+                  <span className="ml-auto w-1.5 h-1.5 rounded-full bg-brand-primary" />
+                )}
+              </a>
+            );
+          })}
 
-                    <span className="relative z-10">{item.label}</span>
-                  </a>
-                );
-              })}
-            </div>
-          </nav>
-
-          {/* Right: Primary CTA Button (Desktop) */}
-          <div className="hidden md:flex items-center gap-3">
+          {/* Divider + actions */}
+          <div className="border-t border-neutral-100 px-5 py-3 flex flex-col gap-2">
             <a
               href={`tel:${COMPANY_DETAILS.phone}`}
-              className="flex items-center gap-2 text-xs font-bold text-slate-700 hover:text-brand-primary px-3 py-2 rounded-lg transition-colors font-the-future"
+              className="flex items-center gap-2 text-xs font-semibold text-neutral-600 hover:text-neutral-900 transition-colors"
             >
-              <i className="fi fi-sr-phone-call text-brand-accent text-sm" />
-              <span>+91 96777 69949</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-brand-primary" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/>
+              </svg>
+              +91 96777 69949
             </a>
-
             <button
               onClick={handleQuoteClick}
-              className="btn-smooth flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-primary text-white text-sm font-bold shadow-md shadow-brand-primary/25 hover:bg-brand-primaryHover transition-all font-the-future cursor-pointer"
+              className="w-full py-2.5 rounded-xl bg-brand-primary text-white text-xs font-bold
+                         hover:bg-brand-primaryHover transition-colors duration-200 cursor-pointer"
             >
-              <span>Get Quote</span>
-              <i className="fi fi-sr-arrow-right text-xs" />
+              Get Free Quote →
             </button>
           </div>
+        </nav>
 
-          {/* Mobile Hamburger Toggle Button */}
-          <div className="md:hidden flex items-center gap-2">
-            <button
-              onClick={() => setIsMobileMenuOpen(true)}
-              className="btn-smooth p-3 rounded-2xl bg-white/90 border border-slate-200 text-brand-secondary shadow-md focus:outline-none cursor-pointer flex items-center justify-center"
-              aria-label="Open Fullscreen Menu"
-            >
-              <i className="fi fi-sr-menu-burger text-lg leading-none" />
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* FULLSCREEN MOBILE NAVIGATION OVERLAY */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: '-100%' }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: '-100%' }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 z-50 min-h-screen w-screen bg-slate-950/95 backdrop-blur-2xl text-white flex flex-col justify-between p-6 sm:p-10 overflow-y-auto transform-gpu"
-          >
-            {/* Top Bar inside Fullscreen Menu */}
-            <div className="flex items-center justify-between pb-6 border-b border-white/10">
-              <div className="flex items-center">
-                <img
-                  src="/SMR LONG.svg"
-                  alt="SMR Packaging Solutions"
-                  className="h-10 w-auto object-contain bg-white/90 p-1.5 rounded-xl shadow-md"
-                />
-              </div>
-
-              {/* Close Button */}
-              <button
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="btn-smooth p-3 rounded-full bg-white/10 text-white hover:bg-white/20 focus:outline-none cursor-pointer flex items-center justify-center"
-                aria-label="Close Menu"
-              >
-                <i className="fi fi-sr-cross text-lg leading-none" />
-              </button>
-            </div>
-
-            {/* Center Navigation Links (Fullscreen Typography) */}
-            <div className="py-8 flex flex-col gap-4">
-              <span className="text-xs font-bold uppercase tracking-widest text-brand-accent flex items-center gap-2 mb-2 font-the-future">
-                <i className="fi fi-sr-sparkles text-xs" /> Navigation Menu
-              </span>
-
-              {NAV_ITEMS.map((item, idx) => {
-                const isActive = activeTab === item.label;
-                return (
-                  <motion.a
-                    key={item.label}
-                    href={item.href}
-                    onClick={(e) => handleNavClick(e, item.href, item.label)}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.25, delay: idx * 0.04 }}
-                    className={`btn-smooth group flex items-center justify-between py-3 border-b border-white/10 font-the-future ${
-                      isActive ? 'text-brand-accent font-extrabold' : 'text-white/90 hover:text-white'
-                    }`}
-                  >
-                    <div className="flex items-baseline gap-4">
-                      <span className="text-xs font-bold text-slate-500 font-mono">{item.num}</span>
-                      <span className={`text-3xl sm:text-4xl tracking-tight ${isActive ? 'font-tiempos-italic text-brand-accent font-normal' : 'font-extrabold'}`}>
-                        {item.label}
-                      </span>
-                    </div>
-
-                    <i className={`fi fi-sr-arrow-right text-xl transition-transform duration-200 ${isActive ? 'translate-x-0 text-brand-accent' : '-translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 text-white'}`} />
-                  </motion.a>
-                );
-              })}
-            </div>
-
-            {/* Bottom Actions & Factory Location Details */}
-            <div className="pt-6 border-t border-white/10 flex flex-col gap-4">
-              <div className="flex items-center gap-2 text-xs text-slate-300 font-the-future">
-                <i className="fi fi-sr-marker text-brand-accent shrink-0 text-sm" />
-                <span>Mathur, Vallakkottai, Kancheepuram, Tamil Nadu – 602105</span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                <a
-                  href={`tel:${COMPANY_DETAILS.phone}`}
-                  className="btn-smooth flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-white/10 border border-white/15 text-white text-sm font-bold font-the-future"
-                >
-                  <i className="fi fi-sr-phone-call text-brand-accent" />
-                  <span>Call +91 96777 69949</span>
-                </a>
-
-                <button
-                  onClick={handleQuoteClick}
-                  className="btn-smooth w-full py-3.5 rounded-2xl bg-brand-primary text-white text-sm font-bold shadow-lg shadow-brand-primary/40 flex items-center justify-center gap-2 font-the-future cursor-pointer font-montserrat-700"
-                >
-                  <span>Get Instant Quote</span>
-                  <i className="fi fi-sr-arrow-right text-xs" />
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+      </div>
+    </header>
   );
 };
